@@ -10,6 +10,59 @@ const PAYMENT_LABELS = {
   pix: 'PIX'
 };
 
+const ORDER_TIMEZONE = 'America/Sao_Paulo';
+const ORDER_START_MINUTES = 7 * 60;
+const ORDER_END_MINUTES = 13 * 60 + 30;
+
+function getOrderTimeMinutes() {
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: ORDER_TIMEZONE,
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  }).formatToParts(new Date());
+  const hour = Number(parts.find(part => part.type === 'hour')?.value || 0);
+  const minute = Number(parts.find(part => part.type === 'minute')?.value || 0);
+  return hour * 60 + minute;
+}
+
+function isOrderOpen() {
+  const nowMinutes = getOrderTimeMinutes();
+  return nowMinutes >= ORDER_START_MINUTES && nowMinutes <= ORDER_END_MINUTES;
+}
+
+function updateOrderHoursUI() {
+  const open = isOrderOpen();
+  const banner = $('orderHoursBanner');
+  const addBtn = $('addMarmitaBtn');
+  const whatsappBtn = $('whatsappBtn');
+
+  if (banner) banner.hidden = open;
+
+  if (addBtn) {
+    addBtn.disabled = !open;
+    addBtn.classList.toggle('is-closed', !open);
+    addBtn.setAttribute('aria-disabled', String(!open));
+  }
+
+  if (whatsappBtn) {
+    whatsappBtn.disabled = !open;
+    whatsappBtn.classList.toggle('is-closed', !open);
+    whatsappBtn.setAttribute('aria-disabled', String(!open));
+    const title = whatsappBtn.querySelector('strong');
+    const detail = whatsappBtn.querySelector('small');
+    if (title) title.textContent = open ? 'Enviar pedido no WhatsApp' : 'Pedidos encerrados';
+    if (detail) detail.textContent = open ? '17 98113-0555' : 'Pedidos das 07:00 às 13:30';
+  }
+}
+
+function ensureOrderOpen() {
+  updateOrderHoursUI();
+  if (isOrderOpen()) return true;
+  showError('Pedidos encerrados no momento. Aceitamos pedidos diariamente das 07:00 às 13:30.');
+  return false;
+}
+
 const state = {
   menu: null,
   size: 'mini',
@@ -269,6 +322,7 @@ function validateDraft() {
 }
 
 function addMarmita() {
+  if (!ensureOrderOpen()) return;
   const error = validateDraft();
   if (error) return showError(error);
 
@@ -633,6 +687,7 @@ function normalizeDeliveryFields() {
 normalizeDeliveryFields();
 
 function sendWhatsApp() {
+  if (!ensureOrderOpen()) return;
   const error = validateOrder();
   if (error) return showError(error);
 
@@ -690,6 +745,9 @@ $('cartItems').addEventListener('click', (event) => {
   removeCartItem(Number(btn.dataset.removeItem));
 });
 $('whatsappBtn').addEventListener('click', sendWhatsApp);
+
+updateOrderHoursUI();
+setInterval(updateOrderHoursUI, 30000);
 
 chooseFulfillment('pickup');
 renderPaymentOptions();

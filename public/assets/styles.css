@@ -65,3 +65,21 @@ button,input,textarea,select{max-width:100%}
 .choice-yes-no{max-width:none}
 .choice-yes-no button{min-width:92px}
 @media(max-width:520px){.choice-yes-no{width:100%;display:grid;grid-template-columns:1fr 1fr}.choice-yes-no button{min-width:0;width:100%}}
+
+/* CEP automático */
+.cep-status{display:block;margin-top:2px;font-size:.68rem;line-height:1.35;font-weight:600;color:var(--muted)}
+.cep-status--loading{color:#7b6415}
+.cep-status--success{color:#087943}
+.cep-status--warning{color:#9a6510}
+.cep-status--error{color:#b12a22}
+
+
+/* Horário de pedidos: 07:00 às 13:30 (America/Sao_Paulo) */
+.order-hours-banner{background:#fff1ee;border-top:1px solid #f2c9c3;border-bottom:1px solid #f2c9c3;color:#8d261f}
+.order-hours-banner__inner{display:flex;align-items:center;justify-content:space-between;gap:18px;padding-top:13px;padding-bottom:13px}
+.order-hours-banner__inner>div{display:grid;gap:2px}
+.order-hours-banner strong{font-size:.94rem;color:#a1231b}
+.order-hours-banner span{font-size:.78rem;line-height:1.35}
+.order-hours-badge{flex:0 0 auto;background:#a1231b;color:#fff!important;border-radius:999px;padding:7px 11px;font-weight:800;letter-spacing:.02em}
+.add-marmita-btn:disabled,.whatsapp-btn:disabled,.add-marmita-btn.is-closed,.whatsapp-btn.is-closed{opacity:.56;cursor:not-allowed!important;transform:none!important;box-shadow:none!important;filter:grayscale(.15)}
+@media(max-width:600px){.order-hours-banner__inner{align-items:flex-start}.order-hours-badge{font-size:.7rem;padding:6px 9px}}
