@@ -31,7 +31,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css" />
+  <link rel="stylesheet" href="assets/styles.css?v=20261026-cep-auto" />
 </head>
 <body>
   <header class="hero">
@@ -148,6 +148,7 @@
             <label class="cep-field">
               <span>CEP</span>
               <input id="deliveryCep" type="text" inputmode="numeric" autocomplete="postal-code" maxlength="9" placeholder="15000-000" />
+              <small id="cepStatus" class="cep-status">Digite o CEP para preencher a rua automaticamente.</small>
             </label>
             <label class="street-field">
               <span>Endereço / Rua</span>
@@ -230,6 +231,6 @@
   <footer class="site-footer">
     <div class="container"><img src="assets/logo.png" alt="Massas Valaretto" /><p>Pedido de marmita • atendimento via WhatsApp</p></div>
   </footer>
-  <script src="assets/app.js?v=20261026-final" defer></script>
+  <script src="assets/app.js?v=20261026-cep-auto" defer></script>
 </body>
 </html>
