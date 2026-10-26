@@ -31,7 +31,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css?v=20261026-cep-auto" />
+  <link rel="stylesheet" href="assets/styles.css?v=20261026-horario-pedidos" />
 </head>
 <body>
   <header class="hero">
@@ -46,6 +46,16 @@
       </div>
     </div>
   </header>
+
+  <div id="orderHoursBanner" class="order-hours-banner" hidden>
+    <div class="container order-hours-banner__inner">
+      <div>
+        <strong id="orderHoursTitle">Pedidos encerrados</strong>
+        <span id="orderHoursText">Aceitamos pedidos diariamente das 07:00 às 13:30.</span>
+      </div>
+      <span class="order-hours-badge">07:00–13:30</span>
+    </div>
+  </div>
 
   <main class="container main-grid">
     <section class="order-panel" aria-labelledby="pedido-title">
@@ -231,6 +241,6 @@
   <footer class="site-footer">
     <div class="container"><img src="assets/logo.png" alt="Massas Valaretto" /><p>Pedido de marmita • atendimento via WhatsApp</p></div>
   </footer>
-  <script src="assets/app.js?v=20261026-cep-server-v2" defer></script>
+  <script src="assets/app.js?v=20261026-horario-pedidos" defer></script>
 </body>
 </html>
