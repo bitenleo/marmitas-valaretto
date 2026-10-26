@@ -554,9 +554,80 @@ function formatCepInput(value) {
   return digits.length > 5 ? `${digits.slice(0, 5)}-${digits.slice(5)}` : digits;
 }
 
+let cepLookupController = null;
+let lastCepLookup = '';
+
+function setCepStatus(message, type = 'neutral') {
+  const status = $('cepStatus');
+  if (!status) return;
+  status.textContent = message;
+  status.className = `cep-status cep-status--${type}`;
+}
+
+async function lookupCep(rawCep) {
+  const digits = String(rawCep || '').replace(/\D/g, '').slice(0, 8);
+  const street = $('deliveryStreet');
+
+  if (digits.length !== 8) {
+    lastCepLookup = '';
+    if (cepLookupController) cepLookupController.abort();
+    setCepStatus('Digite os 8 números do CEP para preencher a rua automaticamente.');
+    return;
+  }
+
+  if (digits === lastCepLookup && street && street.value.trim()) return;
+
+  if (cepLookupController) cepLookupController.abort();
+  cepLookupController = new AbortController();
+  setCepStatus('Buscando CEP...', 'loading');
+
+  try {
+    const response = await fetch(`/api/cep?cep=${digits}&t=${Date.now()}`, {
+      signal: cepLookupController.signal,
+      cache: 'no-store',
+      headers: { 'accept': 'application/json', 'cache-control': 'no-cache' }
+    });
+
+    let data = {};
+    try { data = await response.json(); } catch {}
+
+    if (!response.ok || !data.ok) {
+      lastCepLookup = '';
+      if (street) street.value = '';
+      setCepStatus(data.error || 'CEP não encontrado. Confira o número informado.', response.status === 404 ? 'error' : 'warning');
+      return;
+    }
+
+    lastCepLookup = digits;
+    if (street && data.street) {
+      street.value = data.street;
+      street.dispatchEvent(new Event('input', { bubbles: true }));
+      setCepStatus('Rua preenchida automaticamente.', 'success');
+      const number = $('deliveryNumber');
+      if (number) number.focus();
+    } else {
+      if (street) street.value = '';
+      setCepStatus('CEP encontrado, mas a rua não veio cadastrada. Preencha a rua manualmente.', 'warning');
+      if (street) street.focus();
+    }
+  } catch (error) {
+    if (error && error.name === 'AbortError') return;
+    lastCepLookup = '';
+    setCepStatus('Não foi possível consultar o CEP agora. Preencha a rua manualmente.', 'warning');
+  }
+}
 function normalizeDeliveryFields() {
   const cep = $('deliveryCep');
-  if (cep) cep.addEventListener('input', () => { cep.value = formatCepInput(cep.value); });
+  if (!cep) return;
+
+  cep.addEventListener('input', () => {
+    cep.value = formatCepInput(cep.value);
+    lookupCep(cep.value);
+  });
+
+  cep.addEventListener('blur', () => {
+    lookupCep(cep.value);
+  });
 }
 
 normalizeDeliveryFields();
